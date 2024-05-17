@@ -29,10 +29,8 @@ class APNews:
             screenshot="only-on-failure",
             headless=False,
         )
-
+        logging.info(f"Creating browser page")
         self.page = browser.page()
-        logging.info(f"Navigating to APNews homepage ({homepage_url})")
-        self.page.goto(url=homepage_url, wait_until="domcontentloaded")
         self.homepage_url = homepage_url
 
     def get_news_data(
@@ -147,20 +145,9 @@ class APNews:
             "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
         }
 
-        if self.page.url != self.homepage_url:
-            self.page.goto(self.homepage_url, timeout=90000)
-
-        logging.info("Typing search phrase in search bar")
-
-        try:
-            self.page.click(
-                element_selectors["close_popup_button"], timeout=120000)
-        except:
-            self.page.click(
-                element_selectors["show_search_button"], timeout=1000)
-
-        self.page.fill(element_selectors["search_input"], phrase)
-        self.page.click(element_selectors["search_submit_button"])
+        logging.info(f"Searching for phrase ({phrase})")
+        self.page.goto(self.homepage_url + "/search?q=" + phrase.replace(" ", "+"), timeout=90000, wait_until="domcontentloaded")
+        
 
     def apply_category_filter(self, category: str):
         logging.info(f"Applying category filter ({category})")
