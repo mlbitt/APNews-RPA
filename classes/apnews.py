@@ -1,6 +1,4 @@
-import RPA.Browser.Selenium
 from robocorp import browser
-import RPA.Browser.Selenium as Selenium
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from time import sleep
