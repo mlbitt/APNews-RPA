@@ -217,7 +217,7 @@ class APNews:
                 "Contains Money",
             ]
         )
-        pictures_path = self.set_path("output/pictures/")
+        pictures_path = "output/"
         date = datetime.now()
 
         while date > min_date:
@@ -319,20 +319,6 @@ class APNews:
             text,
             r"(\$\d+(\.\d{1,2}){0,1})|(\$\d{1,3},(\d{3}(,|\.))+\d{1,2})|\d+ dollars|\d+ USD",
         )
-
-    def set_path(self, path: str):
-        logging.info(f"Checking if path '{path}' already exists")
-        if not (os.path.exists(path)):
-            try:
-                logging.info("Trying to create folder(s)")
-                os.makedirs(path)
-                return path
-            except:
-                logging.warning(f"Failed to create path {path}")
-                logging.info("Setting path as current dir")
-                return "output/"
-        else:
-            return path
 
     def get_picture_filename(self, picture_element):
         logging.info("Trying to get picture filename")
