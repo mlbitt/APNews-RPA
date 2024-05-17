@@ -135,40 +135,33 @@ class APNews:
         return first_day_of_current_month - months_to_subtract
 
     def search_for_phrase(self, phrase: str):
-        # element_selectors = {
-        #     "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
-        #     "reject_cookies_button": "//*[normalize-space()='Reject All']",
-        #     "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
-        #     "search_input": "//input[@class='SearchOverlay-search-input']",
-        #     "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
-        # }
+        element_selectors = {
+            "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
+            "reject_cookies_button": "//*[@id='onetrust-reject-all-handler']",''
+            "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
+            "search_input": "//input[@class='SearchOverlay-search-input']",
+            "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
+        }
 
-        # logging.info(f"Navigating to '{self.homepage_url}'")
-        # self.page.goto(self.homepage_url,
-        #                wait_until="domcontentloaded", timeout=120000)
-        # logging.info("Typing search phrase in search bar")
+        logging.info(f"Navigating to '{self.homepage_url}'")
+        self.page.goto(self.homepage_url,
+                       wait_until="domcontentloaded", timeout=120000)
+        logging.info("Typing search phrase in search bar")
 
-        # self.page.get_by_text("Reject All")
+        self.page.click(
+            element_selectors["reject_cookies_button"], timeout=60000)
         
-        # if self.page.is_visible(element_selectors["reject_cookies_button"]):
-        #     self.page.click(
-        #         element_selectors["reject_cookies_button"], force=True)
-        #     sleep(5)
+        if self.page.is_visible(element_selectors["close_popup_button"]):
+            self.page.click(
+                element_selectors["close_popup_button"], force=True)
+            sleep(5)    
         
-        # if self.page.is_visible(element_selectors["close_popup_button"]):
-        #     self.page.click(
-        #         element_selectors["close_popup_button"], force=True)
-        #     sleep(5)    
-            
-        # self.page.click(
-        #     element_selectors["show_search_button"], timeout=60000)
-
-        # self.page.fill(
-        #     element_selectors["search_input"], phrase, timeout=10000)
-        # self.page.click(
-        #     element_selectors["search_submit_button"], timeout=10000)
-        self.page.goto(self.homepage_url + "/search?q=" + phrase.strip().replace(" ", "+"), wait_until="domcontentloaded")
-        sleep(5)
+        self.page.click(
+            element_selectors["show_search_button"], timeout=60000)
+        self.page.fill(
+            element_selectors["search_input"], phrase, timeout=10000)
+        self.page.click(
+            element_selectors["search_submit_button"], timeout=10000)
         
         
     def apply_category_filter(self, category: str):
