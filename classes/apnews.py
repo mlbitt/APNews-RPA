@@ -138,13 +138,23 @@ class APNews:
 
     def search_for_phrase(self, phrase: str):
         logging.info(f"Searching for phrase {phrase}")
-        element_selectors = {
-            "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
-            "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
-            "search_input": "//input[@class='SearchOverlay-search-input']",
-            "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
-        }
+        # element_selectors = {
+        #     "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
+        #     "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
+        #     "search_input": "//input[@class='SearchOverlay-search-input']",
+        #     "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
+        # }
+        #logging.info("Typing search phrase in search bar")
+        # try:
+        #     self.page.click(
+        #         element_selectors["close_popup_button"], timeout=120000)
+        # except:
+        #     self.page.click(
+        #         element_selectors["show_search_button"], timeout=1000)
 
+        # self.page.fill(element_selectors["search_input"], phrase)
+        # self.page.click(element_selectors["search_submit_button"])
+        
         logging.info(f"Searching for phrase ({phrase})")
         self.page.goto(self.homepage_url + "/search?q=" + phrase.replace(" ", "+"), timeout=90000, wait_until="domcontentloaded")
         
