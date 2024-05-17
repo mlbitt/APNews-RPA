@@ -32,7 +32,7 @@ class APNews:
 
         self.page = browser.page()
         logging.info(f"Navigating to APNews homepage ({homepage_url})")
-        self.page.goto(url=homepage_url, wait_until="commit")
+        self.page.goto(url=homepage_url, wait_until="domcontentloaded")
         self.homepage_url = homepage_url
 
     def get_news_data(
@@ -154,12 +154,10 @@ class APNews:
 
         try:
             self.page.click(
-                element_selectors["show_search_button"], timeout=90000)
+                element_selectors["close_popup_button"], timeout=120000)
         except:
             self.page.click(
-                element_selectors["close_popup_button"], timeout=5000)
-            self.page.click(
-                element_selectors["show_search_button"], timeout=10000)
+                element_selectors["show_search_button"], timeout=1000)
 
         self.page.fill(element_selectors["search_input"], phrase)
         self.page.click(element_selectors["search_submit_button"])
