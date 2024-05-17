@@ -25,7 +25,7 @@ class APNews:
     ):
         logging.info("Starting browser")
         browser.configure(
-            browser_engine="chromium",
+            browser_engine="chrome",
             screenshot="only-on-failure",
             headless=False,
         )
@@ -137,27 +137,26 @@ class APNews:
         return first_day_of_current_month - months_to_subtract
 
     def search_for_phrase(self, phrase: str):
-        logging.info(f"Searching for phrase {phrase}")
-        # element_selectors = {
-        #     "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
-        #     "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
-        #     "search_input": "//input[@class='SearchOverlay-search-input']",
-        #     "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
-        # }
-        #logging.info("Typing search phrase in search bar")
-        # try:
-        #     self.page.click(
-        #         element_selectors["close_popup_button"], timeout=120000)
-        # except:
-        #     self.page.click(
-        #         element_selectors["show_search_button"], timeout=1000)
+        element_selectors = {
+            "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
+            "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
+            "search_input": "//input[@class='SearchOverlay-search-input']",
+            "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
+        }
 
-        # self.page.fill(element_selectors["search_input"], phrase)
-        # self.page.click(element_selectors["search_submit_button"])
-        
-        logging.info(f"Searching for phrase ({phrase})")
-        self.page.goto(self.homepage_url + "/search?q=" + phrase.replace(" ", "+"), timeout=90000, wait_until="domcontentloaded")
-        
+        logging.info(f"Navigating to '{self.homepage_url}'")
+        self.page.goto(self.homepage_url,
+                       wait_until="domcontentloaded", timeout=120000)
+        logging.info("Typing search phrase in search bar")
+        try:
+            self.page.click(
+                element_selectors["close_popup_button"], force=True)
+        except:
+            self.page.click(
+                element_selectors["show_search_button"], force=True)
+
+        self.page.fill(element_selectors["search_input"], phrase)
+        self.page.click(element_selectors["search_submit_button"])
 
     def apply_category_filter(self, category: str):
         logging.info(f"Applying category filter ({category})")
@@ -221,7 +220,7 @@ class APNews:
                 try:
                     date = self.convert_to_datetime(
                         item.query_selector(
-                            element_selectors["news_date_div"]).inner_text()
+                            element_selectors["news_date_div"]).inner_text().strip()
                     )
                     if date < min_date:
                         break
@@ -243,7 +242,7 @@ class APNews:
                         picture_element)
 
                     picture_element.screenshot(
-                        path=pictures_path + picture_filename)
+                        path=pictures_path + picture_filename, timeout=1000)
                 except:
                     logging.warning("Failed to get news picture.")
                     picture_filename = None
@@ -347,6 +346,7 @@ class APNews:
         next_page_url = self.page.get_attribute(
             element_selectors["next_page_button"], "href")
         self.page.goto(next_page_url)
+        sleep(4)
 
     class NewsData:
         def __init__(
