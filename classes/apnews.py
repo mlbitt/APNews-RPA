@@ -32,7 +32,7 @@ class APNews:
 
         self.page = browser.page()
         logging.info(f"Navigating to APNews homepage ({homepage_url})")
-        self.page.goto(url=homepage_url, wait_until="domcontentloaded")
+        self.page.goto(url=homepage_url, wait_until="commit")
         self.homepage_url = homepage_url
 
     def get_news_data(

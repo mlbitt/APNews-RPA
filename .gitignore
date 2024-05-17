@@ -17,4 +17,4 @@ testrun/*
 *.pkl
 *.xlsx
 *.log
-a
+*.png
