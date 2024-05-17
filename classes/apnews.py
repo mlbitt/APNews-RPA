@@ -148,8 +148,11 @@ class APNews:
                        wait_until="domcontentloaded", timeout=120000)
         logging.info("Typing search phrase in search bar")
 
-        self.page.click(
-            element_selectors["reject_cookies_button"], timeout=60000)
+        try:
+            self.page.click(
+                element_selectors["reject_cookies_button"], timeout=90000)
+        except:
+            pass
         
         if self.page.is_visible(element_selectors["close_popup_button"]):
             self.page.click(
