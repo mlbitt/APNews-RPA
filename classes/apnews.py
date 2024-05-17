@@ -143,20 +143,23 @@ class APNews:
             "search_input": "//input[@class='SearchOverlay-search-input']",
             "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
         }
-
-        logging.info(f"Navigating to '{self.homepage_url}'")
-        self.page.goto(self.homepage_url,
-                       wait_until="domcontentloaded", timeout=120000)
-        logging.info("Typing search phrase in search bar")
         try:
-            self.page.click(
-                element_selectors["close_popup_button"], force=True)
-        except:
-            self.page.click(
-                element_selectors["show_search_button"], force=True)
+            logging.info(f"Navigating to '{self.homepage_url}'")
+            self.page.goto(self.homepage_url,
+                        wait_until="domcontentloaded", timeout=120000)
+            logging.info("Typing search phrase in search bar")
+            try:
+                self.page.click(
+                    element_selectors["close_popup_button"], force=True)
+            except:
+                self.page.click(
+                    element_selectors["show_search_button"], timeout=60000)
 
-        self.page.fill(element_selectors["search_input"], phrase)
-        self.page.click(element_selectors["search_submit_button"])
+            self.page.fill(element_selectors["search_input"], phrase, timeout=10000)
+            self.page.click(element_selectors["search_submit_button"], timeout=10000)
+        except ValueError as ve:
+            self.page.screenshot("error.png")
+            raise ve
 
     def apply_category_filter(self, category: str):
         logging.info(f"Applying category filter ({category})")
