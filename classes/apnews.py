@@ -137,7 +137,7 @@ class APNews:
     def search_for_phrase(self, phrase: str):
         element_selectors = {
             "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
-            "reject_cookies_button": "//button[normalize-space()='Reject All']",
+            "reject_cookies_button": "//*[normalize-space()='Reject All']",
             "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
             "search_input": "//input[@class='SearchOverlay-search-input']",
             "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
