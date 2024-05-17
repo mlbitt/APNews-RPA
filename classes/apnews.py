@@ -25,7 +25,7 @@ class APNews:
     ):
         logging.info("Starting browser")
         browser.configure(
-            browser_engine="chrome",
+            browser_engine="chromium",
             screenshot="only-on-failure",
             headless=False,
         )
