@@ -154,7 +154,7 @@ class APNews:
 
         try:
             self.page.click(
-                element_selectors["show_search_button"], timeout=45000)
+                element_selectors["show_search_button"], timeout=90000)
         except:
             self.page.click(
                 element_selectors["close_popup_button"], timeout=5000)
