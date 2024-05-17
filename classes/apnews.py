@@ -218,7 +218,7 @@ class APNews:
                 "Contains Money",
             ]
         )
-        pictures_path = self.set_path(os.getcwd() + "/pictures/")
+        pictures_path = self.set_path("output/pictures/")
         date = datetime.now()
 
         while date > min_date:
@@ -331,7 +331,7 @@ class APNews:
             except:
                 logging.warning(f"Failed to create path {path}")
                 logging.info("Setting path as current dir")
-                return "./"
+                return "output/"
         else:
             return path
 
