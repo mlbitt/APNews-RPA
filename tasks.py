@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, filename=f"rpa_{date.today().strftime('%
 @task
 def export_news():
     """
-    Navigate a news website and exports news according to filters provided in work-items.
+    Navigate through the APNews website and exports news according to filters provided in work-items.
     """
     logging.info("Starting program")
 
@@ -23,9 +23,9 @@ def export_news():
     news_data = news_website.get_news_data(
         search_phrase=param['search_phrase'], category=param['category'], n_months=param['n_months'], sort="Newest")
 
-    news_data.export_to_excel(filepath="news_data.xlsx")
+    news_data.export_to_excel(filepath="output/news_data.xlsx")
 
-    workitems.outputs.create(files=["news_data.xlsx"])
+    #workitems.outputs.create(files=["news_data.xlsx"])
 
     logging.info("Program finished")
 

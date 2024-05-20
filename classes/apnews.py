@@ -1,6 +1,4 @@
-import RPA.Browser.Selenium
 from robocorp import browser
-import RPA.Browser.Selenium as Selenium
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from time import sleep
@@ -29,10 +27,8 @@ class APNews:
             screenshot="only-on-failure",
             headless=False,
         )
-
+        logging.info(f"Creating browser page")
         self.page = browser.page()
-        logging.info(f"Navigating to APNews homepage ({homepage_url})")
-        self.page.goto(url=homepage_url, wait_until="domcontentloaded")
         self.homepage_url = homepage_url
 
     def get_news_data(
@@ -43,7 +39,7 @@ class APNews:
         sort: str = "Newest",
     ):
         """
-        Navigate throug the AP News website searching for a phrase, filtering the results and extracting data.
+        Navigate through the AP News website searching for a phrase, filtering the results and extracting data.
         Args:
                 search_phrase:
                 The text that will be searched in the AP News website.
@@ -139,31 +135,37 @@ class APNews:
         return first_day_of_current_month - months_to_subtract
 
     def search_for_phrase(self, phrase: str):
-        logging.info(f"Searching for phrase {phrase}")
         element_selectors = {
             "close_popup_button": "//a[@class='fancybox-item fancybox-close' and @title='Close']",
+            "reject_cookies_button": "//*[@id='onetrust-reject-all-handler']",''
             "show_search_button": "//span[normalize-space()='Show Search']//preceding-sibling::*",
             "search_input": "//input[@class='SearchOverlay-search-input']",
             "search_submit_button": "//button[@class='SearchOverlay-search-submit']",
         }
 
-        if self.page.url != self.homepage_url:
-            self.page.goto(self.homepage_url, timeout=90000)
-
+        logging.info(f"Navigating to '{self.homepage_url}'")
+        self.page.goto(self.homepage_url,
+                       wait_until="domcontentloaded", timeout=120000)
         logging.info("Typing search phrase in search bar")
 
-        try:
+        
+        self.page.click(
+            element_selectors["reject_cookies_button"], timeout=120000)
+        
+        
+        if self.page.is_visible(element_selectors["close_popup_button"]):
             self.page.click(
-                element_selectors["show_search_button"], timeout=45000)
-        except:
-            self.page.click(
-                element_selectors["close_popup_button"], timeout=5000)
-            self.page.click(
-                element_selectors["show_search_button"], timeout=10000)
-
-        self.page.fill(element_selectors["search_input"], phrase)
-        self.page.click(element_selectors["search_submit_button"])
-
+                element_selectors["close_popup_button"], force=True)
+            sleep(5)    
+        
+        self.page.click(
+            element_selectors["show_search_button"], timeout=60000)
+        self.page.fill(
+            element_selectors["search_input"], phrase, timeout=10000)
+        self.page.click(
+            element_selectors["search_submit_button"], timeout=10000)
+        
+        
     def apply_category_filter(self, category: str):
         logging.info(f"Applying category filter ({category})")
         element_selectors = {
@@ -215,7 +217,7 @@ class APNews:
                 "Contains Money",
             ]
         )
-        pictures_path = self.set_path(os.getcwd() + "/pictures/")
+        pictures_path = "output/"
         date = datetime.now()
 
         while date > min_date:
@@ -226,7 +228,7 @@ class APNews:
                 try:
                     date = self.convert_to_datetime(
                         item.query_selector(
-                            element_selectors["news_date_div"]).inner_text()
+                            element_selectors["news_date_div"]).inner_text().strip()
                     )
                     if date < min_date:
                         break
@@ -248,7 +250,7 @@ class APNews:
                         picture_element)
 
                     picture_element.screenshot(
-                        path=pictures_path + picture_filename)
+                        path=pictures_path + picture_filename, timeout=1000)
                 except:
                     logging.warning("Failed to get news picture.")
                     picture_filename = None
@@ -318,20 +320,6 @@ class APNews:
             r"(\$\d+(\.\d{1,2}){0,1})|(\$\d{1,3},(\d{3}(,|\.))+\d{1,2})|\d+ dollars|\d+ USD",
         )
 
-    def set_path(self, path: str):
-        logging.info(f"Checking if path '{path}' already exists")
-        if not (os.path.exists(path)):
-            try:
-                logging.info("Trying to create folder(s)")
-                os.makedirs(path)
-                return path
-            except:
-                logging.warning(f"Failed to create path {path}")
-                logging.info("Setting path as current dir")
-                return "./"
-        else:
-            return path
-
     def get_picture_filename(self, picture_element):
         logging.info("Trying to get picture filename")
         scrset_attribute = picture_element.get_attribute("srcset")
@@ -352,6 +340,7 @@ class APNews:
         next_page_url = self.page.get_attribute(
             element_selectors["next_page_button"], "href")
         self.page.goto(next_page_url)
+        sleep(4)
 
     class NewsData:
         def __init__(
