@@ -39,7 +39,7 @@ class APNews:
         sort: str = "Newest",
     ):
         """
-        Navigate throug the AP News website searching for a phrase, filtering the results and extracting data.
+        Navigate through the AP News website searching for a phrase, filtering the results and extracting data.
         Args:
                 search_phrase:
                 The text that will be searched in the AP News website.

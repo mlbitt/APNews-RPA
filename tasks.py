@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, filename=f"rpa_{date.today().strftime('%
 @task
 def export_news():
     """
-    Navigate a news website and exports news according to filters provided in work-items.
+    Navigate through the APNews website and exports news according to filters provided in work-items.
     """
     logging.info("Starting program")
 
