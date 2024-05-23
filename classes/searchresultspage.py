@@ -19,24 +19,20 @@ class SearchResultsPage(APNews):
     def apply_category_filter(page, category: str):
         logging.info(f"Applying category filter ({category})")
         try:
-            page.click(
-                Locators.get_locator("search_results", "expand_category_button"), timeout=60000)
+            page.click(Locators.expand_category_button, timeout=60000)
         except:
-            if page.is_visible(Locators.get_locator("search_results", "close_banner_button")):
+            if page.is_visible(Locators.close_banner_button):
                 page.click(Locators.get_locator(
                     "search_results", "close_banner_button"))
-                page.click(
-                    Locators.get_locator("search_results", "expand_category_button"), timeout=10000
-                )
+                page.click(Locators.expand_category_button, timeout=10000)
 
-        page.click(
-            Locators.get_locator("search_results", "check_category_input", category), timeout=15000)
+        page.click(Locators.check_category_input.format(
+            fcategory=category), timeout=15000)
         sleep(5)
 
     def apply_sort_by(page, sort_by: str):
         logging.info(f"Applying sort ({sort_by})")
-        page.select_option(
-            selector=Locators.get_locator("search_results", "sort_news_select"), value=sort_by)
+        page.select_option(selector=Locators.sort_news_select, value=sort_by)
         sleep(5)
 
     def convert_to_datetime(date: str):
@@ -65,31 +61,30 @@ class SearchResultsPage(APNews):
         return text.lower().count(phrase.lower())
 
     def navigate_to_next_results_page(page):
-        next_page_url = page.get_attribute(
-            Locators.get_locator("search_results", "next_page_button"), "href")
+        next_page_url = page.get_attribute(Locators.next_page_button, "href")
         page.goto(next_page_url)
         sleep(4)
 
     def get_news_item_data(element, search_phrase) -> dict:
         try:
             title = element.query_selector(
-                Locators.get_locator("search_results", "news_title_div")).inner_text()
+                Locators.news_title_div).inner_text()
             date = SearchResultsPage.convert_to_datetime(
-                element.query_selector(Locators.get_locator("search_results", "news_date_div")).inner_text().strip())
+                element.query_selector(Locators.news_date_div).inner_text().strip())
         except:
             logging.err("Failed to get news title and/or date.")
             return {}
 
         try:
             description = element.query_selector(
-                Locators.get_locator("search_results", "news_description_div")).inner_text()
+                Locators.news_description_div).inner_text()
         except:
             logging.warning("Failed to get news description.")
             description = None
 
         try:
             picture_filename = element.query_selector(
-                Locators.get_locator("search_results", "news_picture_img")).get_attribute("srcset")
+                Locators.news_picture_img).get_attribute("srcset")
             picture_filename = picture_filename[picture_filename.rfind(
                 r"%2F") + 3: -3]
         except:
@@ -129,9 +124,7 @@ class SearchResultsPage(APNews):
         )
 
         while date > min_date:
-            news_elements = page.query_selector_all(
-                Locators.get_locator("search_results", "news_group_divs")
-            )
+            news_elements = page.query_selector_all(Locators.news_group_divs)
             for element in news_elements:
                 news_item_data = SearchResultsPage.get_news_item_data(
                     element, search_phrase)
@@ -143,8 +136,7 @@ class SearchResultsPage(APNews):
                         date, "%m/%d/%Y")
 
                 if (news_item_data.get("Picture Filename", None) is not None):
-                    element.query_selector(
-                        Locators.get_locator("search_results", "news_picture_img")).screenshot(
+                    element.query_selector(Locators.news_picture_img).screenshot(
                         path=pictures_path + news_item_data["Picture Filename"] + ".png", timeout=1000)
 
                 df_news_data = pd.concat(
